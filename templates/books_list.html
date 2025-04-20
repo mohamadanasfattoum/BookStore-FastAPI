@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Books List</h1>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Example row -->
+         
+         
+        {% for book in books %}
+        <tr>
+            <td>{{book.id}}</td>
+            <td>{{book.title}}</td>
+            <td>{{book.author.name}}</td>
+            <td>
+                <a href="/books/1" class="btn btn-primary btn-sm">Details</a>
+                <a href="/books/1/update" class="btn btn-warning btn-sm">Edit</a>
+                <a href="/books/1/delete" class="btn btn-secondary btn-sm">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -5,6 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from core.database import engine, Base
 
 from api.books import router as books_api_router
+from views.books import router as books_view_router
 
 # intialize app
 app = FastAPI()
@@ -14,6 +15,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # add routers
 app.include_router(books_api_router)
+app.include_router(books_view_router)
 
 # @app.get("/")
 # async def main():
