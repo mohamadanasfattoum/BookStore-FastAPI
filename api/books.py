@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
-from typing import List
+from sqlalchemy import or_
+from typing import List, Optional
 from core.database import get_db
 from models.book import Book
 from schema.book import BookCreateSchema, BookResponseSchema, BookUpdateSchema
-
 
 router= APIRouter(prefix="/api/books")
 
@@ -26,10 +26,10 @@ def create_books_api(book:BookCreateSchema, db:Session=Depends(get_db)): # join 
 
 
 
-@router.get("/",response_model=List[BookResponseSchema]) # out put schema
-def list_books_api(db:Session=Depends(get_db)):
-    books = db.query(Book)
-    return books 
+# @router.get("/",response_model=List[BookResponseSchema]) # out put schema
+# def list_books_api(db:Session=Depends(get_db)):
+#     books = db.query(Book)
+#     return books 
 
 
 
@@ -72,3 +72,24 @@ def update_books_api(book_id:int,book_update:BookUpdateSchema,db:Session=Depends
     db.commit()
     db.refresh(book)
     return book
+
+
+
+# search books
+@router.get("/",response_model=List[BookResponseSchema]) # out put schema
+def list_books_api(
+    db:Session=Depends(get_db),
+    search: Optional[str] = Query(None,description="Search by title or id"), # search query
+    order_by: Optional[str] = Query("id",regex="^-?(title|id)$",description="Order y titleor description"), # order direction query
+
+    ):
+    books = db.query(Book)
+    if search:
+        books = books.filter(or_(Book.title.ilike(f"%{search}") | Book.description.ilike(f"%{search}%"))) # search by title or description
+
+    if order_by == "title":
+        books = books.order_by(Book.title) 
+    elif order_by == "-title" or order_by == "-id":
+        books = books.order_by(Book.title.desc())   
+        
+    return books
