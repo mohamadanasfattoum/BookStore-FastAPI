@@ -23,7 +23,9 @@
             <td>
                 <a href="/books/{{book.id}}" class="btn btn-primary btn-sm">Details</a>
                 <a href="/books/{{book.id}}/update" class="btn btn-warning btn-sm">Edit</a>
-                <a href="/books/{{book.id}}/delete" class="btn btn-secondary btn-sm">Delete</a>
+                <form action="/books/{{book.id}}/delete" method="post" style="display:inline;">
+                    <button type="submit" value="delete" class="btn btn-secondary btn-sm">Delete</button>
+                </form>
             </td>
         </tr>
         {% endfor %}

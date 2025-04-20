@@ -75,3 +75,16 @@ def update_book(
     db.refresh(book)
     return RedirectResponse(url=f"/books/{book.id}", status_code=303)
 
+
+
+
+
+@router.post("/{book_id}/delete", include_in_schema=False)
+def book_delete(book_id:int,db: Session = Depends(get_db)):
+    book = db.query(Book).get(book_id)
+    # book = db.query(Book).filter(Book.id == book_id).first()
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
+    db.delete(book)
+    db.commit()
+    return RedirectResponse(url="/books", status_code=303)
