@@ -29,4 +29,17 @@ def create_books_api(book:BookCreateSchema, db:Session=Depends(get_db)): # join 
 @router.get("/",response_model=List[BookResponseSchema]) # out put schema
 def list_books_api(db:Session=Depends(get_db)):
     books = db.query(Book)
-    return books
+    return books 
+
+
+
+
+@router.get("/{book_id}",response_model=BookResponseSchema) # out put schema
+def book_detail_api(book_id:int , db:Session=Depends(get_db)): # join data
+    book = db.query(Book).filter(Book.id==book_id).first()
+    return book
+
+
+
+
+
