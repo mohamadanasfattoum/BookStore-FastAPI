@@ -45,3 +45,33 @@ def book_detail(request: Request,book_id:int,db: Session = Depends(get_db)):
     if not book:
         raise HTTPException(status_code=404, detail="Book not found")
     return templates.TemplateResponse("books_detail.html", {"request": request, "book": book})
+
+
+
+
+@router.get("/{book_id}/update", include_in_schema=False)
+def update_book_form(request: Request,book_id:int,db: Session = Depends(get_db)):
+    book = db.query(Book).get(book_id)
+    authors = db.query(Author)
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
+
+    return templates.TemplateResponse("books_update.html", {"request": request,"book":book, "authors": authors})
+
+
+@router.post("/{book_id}", include_in_schema=False)
+def update_book(
+    book_id:int,
+    title:str = Form(...),
+    description:str = Form(...),
+    author_id:int = Form(...),
+    db: Session = Depends(get_db)
+):
+    book = db.query(Book).get(book_id)
+    book.title = title
+    book.description = description
+    book.author_id = author_id
+    db.commit() 
+    db.refresh(book)
+    return RedirectResponse(url=f"/books/{book.id}", status_code=303)
+
