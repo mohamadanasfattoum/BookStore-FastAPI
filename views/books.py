@@ -38,4 +38,10 @@ def create_book(
     db.refresh(book)
     return RedirectResponse(url="/books", status_code=303)
 
-
+@router.get("/{book_id}", include_in_schema=False)
+def book_detail(request: Request,book_id:int,db: Session = Depends(get_db)):
+    book = db.query(Book).get(book_id)
+    # book = db.query(Book).filter(Book.id == book_id).first()
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
+    return templates.TemplateResponse("books_detail.html", {"request": request, "book": book})
