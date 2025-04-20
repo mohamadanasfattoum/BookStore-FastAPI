@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from core.database import get_db
@@ -37,9 +37,9 @@ def list_books_api(db:Session=Depends(get_db)):
 @router.get("/{book_id}",response_model=BookResponseSchema) # out put schema
 def book_detail_api(book_id:int , db:Session=Depends(get_db)): # join data
     book = db.query(Book).filter(Book.id==book_id).first()
+    if not book:
+        raise HTTPException(status_code=404,detail="Book not found")
     return book
-
-
 
 
 
